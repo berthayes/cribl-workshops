@@ -1,0 +1,30 @@
+---
+- name: Cribl Provisioning
+  hosts: all
+  remote_user: root
+  gather_facts: false
+  tags: cribl_stream
+  tasks:
+    - name: apt-get update and upgrade
+      apt:
+        update_cache: yes
+        upgrade: full
+        force_apt_get: yes
+    - name: install docker
+      apt:
+        name: jq, docker, docker-compose, python3, python3-pip
+        state: latest
+        force_apt_get: yes
+    - name: moving docker-compose file
+      ansible.builtin.copy:
+        src: zeek-cribl-docker-compose.yml
+        dest: /home/ubuntu/zeek-cribl-docker-compose.yml
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+    - name: Starting Docker
+      shell:
+        cmd: docker-compose -f /home/ubuntu/zeek-cribl-docker-compose.yml up -d
+    - name: Waiting a few minutes for software to finish spinning up
+      pause:
+        minutes: 3
