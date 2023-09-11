@@ -1,0 +1,13 @@
+{
+  "currentPassword": "admin",
+  "disabled": false,
+  "email": "spam@mrhaha.net",
+  "first": "Raul",
+  "id": "admin",
+  "last": "Hormel",
+  "password": "dingdong",
+  "roles": [
+    "admin"
+  ],
+  "username": "admin"
+}

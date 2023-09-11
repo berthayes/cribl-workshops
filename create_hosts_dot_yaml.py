@@ -28,8 +28,9 @@ cfg.read(config_file)
 
 pem = cfg.get('aws', 'your_pem')
 workshop_name = cfg.get('workshop', 'workshop_name')
+region = cfg.get('aws', 'region')
 
-ec2 = boto3.client('ec2')
+ec2 = boto3.client('ec2', region_name = region)
 node_filters = [
     {'Name': 'tag:workshop', 'Values': [workshop_name]},
     {'Name': 'key-name', 'Values': [pem]},
@@ -98,10 +99,13 @@ for res_dict in Reservations:
         'private_dns': private_dns
         }
 
-    hosthash[public_dns] = node_job
+    #hosthash[public_dns] = node_job
+    hosthash[private_ip] = node_job
 
     jobs_list.append(node_job)
-    nodes_list.append(public_dns)
+    #nodes_list.append(public_dns)
+    nodes_list.append(private_ip)
+
 
 dedup = list(dict.fromkeys(jobs_list))
 

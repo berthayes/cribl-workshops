@@ -38,6 +38,7 @@ cfg.read(config_file)
 
 
 security_group_id = cfg.get('aws', 'security_group_id')
+region = cfg.get('aws', 'region')
 subnet_id = cfg.get('aws', 'subnet_id')
 ami = cfg.get('aws', 'ami')
 InstanceType = cfg.get('aws', 'InstanceType')
@@ -47,7 +48,7 @@ your_email = cfg.get('aws', 'your_email')
 your_workshop_name = cfg.get('workshop', 'workshop_name')
 
 def create_instance(host_job, iteration):
-    ec2 = boto3.resource('ec2')
+    ec2 = boto3.resource('ec2', region_name = region)
     vm_name = cfg.get('aws', 'vm_name')
     vm_name = vm_name + "-" + host_job + "-" + iteration
     workshop_host = host_job

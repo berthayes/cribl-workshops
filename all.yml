@@ -15,16 +15,26 @@
         name: jq, docker, docker-compose, python3, python3-pip
         state: latest
         force_apt_get: yes
-    - name: moving docker-compose file
-      ansible.builtin.copy:
-        src: zeek-cribl-docker-compose.yml
-        dest: /home/ubuntu/zeek-cribl-docker-compose.yml
-        owner: ubuntu
-        group: ubuntu
-        mode: '0644'
+    - name: Git clone syslog-replay repository
+      git:
+        repo: 'https://github.com/berthayes/syslog-replay.git'
+        dest: /home/ubuntu/syslog-replay
+    - name: Creating Cribl Config directory
+      shell:
+        cmd: mkdir /root/cribl-config
+    - name: Creating Docker Image for syslog-replay
+      shell:
+        cmd: cd /home/ubuntu/syslog-replay && docker build -f /home/ubuntu/syslog-replay/Dockerfile -t syslog-replay .
     - name: Starting Docker
       shell:
-        cmd: docker-compose -f /home/ubuntu/zeek-cribl-docker-compose.yml up -d
+        cmd: docker-compose -f /home/ubuntu/syslog-replay/docker-compose.yml up -d
+    - name: curl built-in REST endpoint for public DNS
+      shell:
+        cmd: "curl -s http://169.254.169.254/latest/meta-data/public-hostname"
+      register: hostname
+    - name: print dns
+      debug:
+        msg: "{{ hostname.stdout }}"
     - name: Waiting a few minutes for software to finish spinning up
       pause:
         minutes: 3
