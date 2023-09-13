@@ -1,11 +1,11 @@
 {
   "currentPassword": "admin",
   "disabled": false,
-  "email": "spam@mrhaha.net",
-  "first": "Raul",
+  "email": "don.incognito@cribl.io",
+  "first": "Don",
   "id": "admin",
-  "last": "Hormel",
-  "password": "dingdong",
+  "last": "Incognito",
+  "password": "Passw0rd!",
   "roles": [
     "admin"
   ],

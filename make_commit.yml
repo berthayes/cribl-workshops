@@ -1,0 +1,64 @@
+---
+- name: make a commit
+  hosts: all
+  gather_facts: false
+  tags: commit
+  tasks: 
+    - name: Get auth token
+      ansible.builtin.uri:
+        url: http://localhost:19000/api/v1/auth/login
+        method: POST
+        body_format: json
+        body:
+          username: "admin"
+          password: "Passw0rd!"
+        return_content: false
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+      register: response
+
+    - name: make a commit
+      ansible.builtin.uri:
+        url: http://localhost:19000/api/v1/version/commit
+        method: POST
+        body:
+          effective: true
+          group: default
+          message: "Making a new commit here!"
+        body_format: json
+        headers:
+          Content-Type: application/json
+          Accept: application/json          
+          Authorization: "Bearer {{ response.json.token }}"
+      register: result
+
+    # - name: print commit result
+    #   debug:
+    #     msg: "{{ result.json | json_query('items[0].commit') }}"
+
+    - name: Deploy the commit
+      ansible.builtin.uri:
+        url: http://localhost:19000/api/v1/master/groups/default/deploy
+        method: PATCH
+        body: 
+          version: "{{ result.json | json_query('items[0].commit') }}"
+        body_format: json
+        headers:
+          Content-Type: application/json
+          Accept: application/json          
+          Authorization: "Bearer {{ response.json.token }}"          
+
+    - name: Commit to master branch
+      ansible.builtin.uri:
+        url: http://localhost:19000/api/v1/version/commit
+        method: POST
+        body:
+          message: "Making a global commit"
+        body_format: json
+        headers:
+          Content-Type: application/json
+          Accept: application/json          
+          Authorization: "Bearer {{ response.json.token }}"
+      register: master_commit_response
+

@@ -1,0 +1,45 @@
+---
+- name: Get auth token
+  hosts: all
+  gather_facts: false
+  tags: cribl_admin_stuff
+  tasks: 
+    - name: Get auth token
+      ansible.builtin.uri:
+        url: http://localhost:19000/api/v1/auth/login
+        method: POST
+        body_format: json
+        body: "{\"username\":\"admin\",\"password\":\"admin\"}"
+        return_content: false
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+      register: response
+
+    - name: Show auth token
+      debug:
+        msg: "{{ response.json.token }}"
+
+    - name: Change Admin Password
+      ansible.builtin.uri:
+        url: http://localhost:19000/api/v1/system/users/admin
+        method: PATCH
+        body_format: json
+        headers:
+          Content-Type: application/json
+          Accept: application/json          
+          Authorization: "Bearer {{ response.json.token }}"
+        src: ./change_admin.json
+
+    - name: Add production license
+      ansible.builtin.uri:
+        url: http://localhost:19000/api/v1/system/licenses
+        method: POST
+        body_format: json
+        headers:
+          Content-Type: application/json
+          Accept: application/json          
+          Authorization: "Bearer {{ response.json.token }}"
+        src: ./add_license.json
+
+
