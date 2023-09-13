@@ -38,7 +38,7 @@ The python scripts spin up an arbitrary number of EC2 hosts and create a hosts.y
     ```
     ansible-playbook -i hosts.yml all.yml
     ```
-- Each host is now running Cribl Stream with the Leader Node's Web UI available on port 9000.
+- Each host is now running Cribl Stream with the Leader Node's Web UI available on port 19000.
 - Log in with default credentials `admin:admin`
 - Accept the license agreement
 - Change your password
